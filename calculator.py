@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+import math
 
 # --- Constants ---
 TITLE_FONT = ("Arial", 16, "bold")
@@ -7,27 +8,41 @@ ENTRY_FONT = ("Arial", 12)
 BUTTON_FONT = ("Arial", 14, "bold")
 RESULT_FONT = ("Arial", 12)
 
-WINDOW_SIZE = "400x350"
+WINDOW_SIZE = "600x350"
 
 
 # --- Functions ---
 def calculate(operation):
     try:
-        num1 = float(num1_entry.get())
-        num2 = float(num2_entry.get())
+        # For square and sqrt — only num1 is needed
+        if operation in ["square", "sqrt"]:
+            num1 = float(num1_entry.get())
 
-        operations = {
-            "add": num1 + num2,
-            "subtract": num1 - num2,
-            "multiply": num1 * num2,
-            "divide": None if num2 == 0 else num1 / num2
-        }
+            if operation == "square":
+                result = num1 ** 2
+            elif operation == "sqrt":
+                if num1 < 0:
+                    messagebox.showerror("Math Error", "Cannot take square root of negative number.")
+                    return
+                result = math.sqrt(num1)
 
-        if operation == "divide" and num2 == 0:
-            messagebox.showerror("Math Error", "Cannot divide by zero.")
-            return
+        else:
+            # For other operations — both num1 and num2
+            num1 = float(num1_entry.get())
+            num2 = float(num2_entry.get())
 
-        result = operations[operation]
+            if operation == "add":
+                result = num1 + num2
+            elif operation == "subtract":
+                result = num1 - num2
+            elif operation == "multiply":
+                result = num1 * num2
+            elif operation == "divide":
+                if num2 == 0:
+                    messagebox.showerror("Math Error", "Cannot divide by zero.")
+                    return
+                result = num1 / num2
+
         result_label.config(text=f"Result: {result:.2f}")
 
     except ValueError:
@@ -68,7 +83,9 @@ buttons = [
     ("+", "add"),
     ("-", "subtract"),
     ("×", "multiply"),
-    ("÷", "divide")
+    ("÷", "divide"),
+    ("x²", "square"),
+    ("√x", "sqrt")
 ]
 
 for i, (symbol, op) in enumerate(buttons):
